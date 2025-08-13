@@ -1,0 +1,41 @@
+set pagination off
+    set confirm off
+    break *0x000000000040538d
+    run <<< "flag{tr4v3rs1ngG.graph()_the_m4zea"
+    c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+c
+
+    x/s $rax
+    quit
+    
