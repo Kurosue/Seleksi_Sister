@@ -20,3 +20,11 @@ gui: build
 	@$(GPP) $(SRC_DIR)/main.cpp $(SRC_DIR)/fractal.c -o $(BIN_DIR)/main_gui $(CXXFLAGS) $(LDFLAGS)
 	@echo "Running..."
 	@$(BIN_DIR)/main_gui
+
+clear: 
+	@echo "Clearing image files..."
+	@rm -rf image/*
+
+clean:
+	@echo "Cleaning up build files..."
+	@rm -rf $(BIN_DIR)/*

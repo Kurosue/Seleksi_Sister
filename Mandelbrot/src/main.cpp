@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <iostream>
 #include <cmath>
-#include "fractal.h" // sudah ada generate_serial, generate_parallel, generate_julia_serial, generate_julia_parallel, generate_gpu
+#include "fractal.h" 
 
 #define WINDOW_W 1280
 #define WINDOW_H 720
@@ -23,9 +23,6 @@ struct AppState {
     double time_serial = 0.0;
     double time_parallel = 0.0;
     double ratio = 0.0;
-    double time_gpu = 0.0;
-    double ratio_gpu_cpu = 0.0;
-    double ratio_gpu_serial = 0.0;
     bool juliaMode = false;
     double c_real = 0.285;
     double c_imag = 0.01;
@@ -116,24 +113,11 @@ int main() {
         draw_image(imgData);
     };
 
-    auto regenerate_gpu = [&]() {
-        std::vector<unsigned char> imgData(state.width * state.height * 3);
-        sf::Clock clk;
-        generate_gpu(imgData.data(), state.width, state.height, state.max_iter,
-                     state.center_x, state.center_y, state.scale,
-                     state.juliaMode, state.c_real, state.c_imag);
-        state.time_gpu = clk.getElapsedTime().asSeconds();
-        if (state.time_parallel > 0) state.ratio_gpu_cpu = state.time_parallel / state.time_gpu;
-        if (state.time_serial > 0) state.ratio_gpu_serial = state.time_serial / state.time_gpu;
-        draw_image(imgData);
-    };
-
     InputField fieldWidth{{FRACTAL_W + 20, 40, UI_W - 40, 32}, std::to_string(state.width)};
     InputField fieldHeight{{FRACTAL_W + 20, 90, UI_W - 40, 32}, std::to_string(state.height)};
     Button btnGenerate{{FRACTAL_W + 20, 190, UI_W - 40, 40}, "Generate CPU", false, {66,133,244}, {46,92,184}};
-    Button btnGenerateGPU{{FRACTAL_W + 20, 240, UI_W - 40, 40}, "Generate GPU", false, {255,165,0}, {200,120,0}};
-    Button btnSave{{FRACTAL_W + 20, 290, UI_W - 40, 40}, "Save", false, {46,204,113}, {36,150,83}};
-    Button btnToggle{{FRACTAL_W + 20, 340, UI_W - 40, 40}, "Mode: Mandelbrot", false, {155,89,182}, {115,59,142}};
+    Button btnSave{{FRACTAL_W + 20, 240, UI_W - 40, 40}, "Save", false, {46,204,113}, {36,150,83}};
+    Button btnToggle{{FRACTAL_W + 20, 290, UI_W - 40, 40}, "Mode: Mandelbrot", false, {155,89,182}, {115,59,142}};
 
     regenerate_full();
 
@@ -169,7 +153,6 @@ int main() {
                 fieldWidth.focused = fieldWidth.rect.contains(mpos);
                 fieldHeight.focused = fieldHeight.rect.contains(mpos);
                 if (btnGenerate.rect.contains(mpos)) btnGenerate.pressed = true;
-                if (btnGenerateGPU.rect.contains(mpos)) btnGenerateGPU.pressed = true;
                 if (btnSave.rect.contains(mpos)) btnSave.pressed = true;
                 if (btnToggle.rect.contains(mpos)) btnToggle.pressed = true;
             }
@@ -180,12 +163,6 @@ int main() {
                     state.width = std::stoi(fieldWidth.text);
                     state.height = std::stoi(fieldHeight.text);
                     regenerate_full();
-                }
-                if (btnGenerateGPU.pressed) {
-                    btnGenerateGPU.pressed = false;
-                    state.width = std::stoi(fieldWidth.text);
-                    state.height = std::stoi(fieldHeight.text);
-                    regenerate_gpu();
                 }
                 if (btnSave.pressed) {
                     btnSave.pressed = false;
@@ -251,16 +228,12 @@ int main() {
         };
 
         drawButton(btnGenerate);
-        drawButton(btnGenerateGPU);
         drawButton(btnSave);
         drawButton(btnToggle);
 
         std::ostringstream oss;
         oss << "Serial: " << std::fixed << std::setprecision(3) << state.time_serial << "s\n"
-            << "Parallel: " << state.time_parallel << "s (" << state.ratio << "x)\n"
-            << "GPU: " << state.time_gpu << "s\n"
-            << "GPU vs CPU: " << state.ratio_gpu_cpu << "x\n"
-            << "GPU vs Serial: " << state.ratio_gpu_serial << "x";
+            << "Parallel: " << state.time_parallel << "s (" << state.ratio << "x)";
         sf::Text statTxt(oss.str(), font, 14);
         statTxt.setFillColor(sf::Color(200, 200, 200));
         statTxt.setPosition(FRACTAL_W + 20, btnToggle.rect.top + btnToggle.rect.height + 20);
@@ -269,4 +242,5 @@ int main() {
         window.display();
     }
 }
+
 
