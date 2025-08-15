@@ -41,3 +41,4 @@ io = process('./dots')
 io.sendline(flag.encode())
 res = io.recvall(timeout=5)
 log.success(f"Result : \n{res.decode()}")
+
