@@ -1,0 +1,3 @@
+[submodule "Certified Tech Frustation/Blockchain/solver/lib/forge-std"]
+	path = Certified Tech Frustation/Blockchain/solver/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
